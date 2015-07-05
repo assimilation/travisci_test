@@ -1,5 +1,5 @@
 language: c
 script:
- - sudo run.sh
+ - sudo ./run.sh
 
 
