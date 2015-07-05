@@ -1,7 +1,7 @@
 language: c
 script:
  - pwd
- - cd travisci_test
+ - chmod u+x run.sh
  - sudo ./run.sh
 
 
