@@ -38,6 +38,7 @@ whoami
 #ENV TERM linux
 #ENV DEBIAN_FRONTEND noninteractive
 #RUN
+export DEBIAN_FRONTEND=noninteractive
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 #RUN
 apt-get -y update && apt-get -y install --no-install-recommends gcc cmake make pkg-config libglib2.0-dev resource-agents wget libpcap0.8-dev rsyslog 
