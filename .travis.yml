@@ -1,46 +1,23 @@
 language: c
 
 before_install:
-#  - uname -a
-#  - cat /etc/issue
-#  - env
-#  - cat /etc/network/interfaces
-#  - sudo cat /var/log/syslog
-#  - sudo cat /var/log/auth.log
-#  - sudo tail /var/log/syslog
-#  - sudo tail /var/log/auth.log
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq doxygen valgrind libpcap-dev
-  - hg clone 'http://hg.linux-ha.org/%7Cexperimental/assimilation/'
-  - sudo pip install testify ctypesgen py2neo tornado
-  - pip freeze
-#  - dpkg-query --show
+ - echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
+ - apt-get -y update && apt-get -y install --no-install-recommends gcc cmake make pkg-config libglib2.0-dev resource-agents wget libpcap0.8-dev rsyslog 
+ - apt-get -y install --no-install-recommends python-pip python-flask debianutils lsof python-netaddr valgrind python-dev lsb-release python-demjson
+ - apt-get -y install --no-install-recommends bind9 host           # So we have some services to monitor in system testing
+ - apt-get -y install --no-install-recommends strace gdb tcpdump   # For debugging...
+ - pip install ctypesgen 'py2neo<2.0' getent
+
+#libsodium
+ - cd /root && mkdir -p assimilation/bin/buildtools assimilation/bin/libsodium assimilation/packages
+ - wget http://hg.linux-ha.org/assimilation/raw-file/tip/buildtools/libsodium.mkdeb.sh -O /root/assimilation/bin/buildtools/libsodium.mkdeb.sh
+ - cd /root/assimilation/bin/libsodium && bash ../buildtools/libsodium.mkdeb.sh && dpkg --install *.deb && cp *.deb /root/assimilation/packages
 
 services:
   - neo4j
 
 install:
-  - mkdir root_of_binary_tree
-  - cd root_of_binary_tree
-#  - pwd
-  - cmake ../assimilation
 
 script:
-  - cpack
-  - sudo dpkg -i assimilation-nanoprobe-0.1.0-amd64.deb
-  - /usr/share/assimilation/discovery_agents/netconfig
 
-#run some tests
-#  - netstat -a
-  - cd testcode
-#  - ifconfig
-#  - sudo apt-get install strace
-#  - wget https://raw.github.com/borgified/diffdpkg/master/grind.sh
-#  - mv ./grind.sh ../../assimilation/testcode/.
-#  - chmod a+x ../../assimilation/testcode/grind.sh
-  - export BROKENDNS=1
-  - sudo ../../assimilation/testcode/grind.sh
-  - cd ../../assimilation/cma
-  - testify tests
-  - ../../root_of_binary_tree/testcode/pinger ::1
 
